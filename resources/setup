@@ -10,3 +10,4 @@ sudo apt update
 
 # Install Ansible
 sudo apt install -y ansible
+git clone https://github.com/ppp3ppj/ansible-bootcamp $1
