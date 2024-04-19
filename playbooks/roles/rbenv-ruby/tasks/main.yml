@@ -6,6 +6,7 @@
 - name: Set default values for variables
   set_fact:
     shell_executable_default: "/bin/bash"  # Set default shell executable to /bin/bash
+    shell_type_default: "bash"  # Set default shell type to bash
 
 - name: Set ruby_version variable
   set_fact:
@@ -14,6 +15,10 @@
 - name: Set ruby_install_dir variable
   set_fact:
     ruby_install_dir: "{{ rbenv_root }}/versions/{{ ruby_version }}"
+
+- name: Set shell_type variable
+  set_fact:
+    shell_type: "{{ shell_type_default | default(omit) }}"  # Use default value if not defined
 
 - name: Set shell_config_file variable
   set_fact:
