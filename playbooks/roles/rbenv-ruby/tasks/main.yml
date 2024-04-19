@@ -130,21 +130,17 @@
     msg: "Ruby version is {{ ruby_version_output.stdout }}"
   when: ruby_version_output.rc == 0
 
+
 - name: Check if .gemrc file exists
   stat:
     path: ~/.gemrc
   register: gemrc_check
 
 - name: Create .gemrc file if it doesn't exist
-  file:
-    path: ~/.gemrc
-    state: touch
-    mode: '0644'
-  when: gemrc_check.stat.exists == false
-
-- name: Add gem configuration to .gemrc
-  shell: "echo 'gem: --no-document' > ~/.gemrc"
-  args:
-    warn: false
+  copy:
+    content: |
+      # ~/.gemrc
+      gem: --no-document
+    dest: ~/.gemrc
   when: gemrc_check.stat.exists == false
 
