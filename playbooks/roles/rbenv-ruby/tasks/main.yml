@@ -49,7 +49,7 @@
     clone: yes
 
 - name: Restart shell
-  shell: "source {{ shell_type }}"
+  shell: "source {{ shell_config_file }}"
   args:
     executable: "{{ shell_executable_default }}"
   when: shell_config_check.stat.exists
