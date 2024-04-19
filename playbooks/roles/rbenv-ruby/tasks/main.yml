@@ -149,15 +149,29 @@
   register: bundler_check
   ignore_errors: true
 
-- name: Install bundler if not installed
-  command: gem install bundler --no-document
+- name: Check if Bundler is installed
+  shell: "bundler --version"
+  register: bundler_check
+  ignore_errors: true
+
+- debug:
+    msg: "Bundler is installed with version {{ bundler_check.stdout }}"
+  when: bundler_check.rc == 0
+
+- debug:
+    msg: "Bundler is not installed"
   when: bundler_check.rc != 0
 
-- name: Display bundler version
-  command: bundler --version
-  register: bundler_version_output
+- name: Install Bundler if not found
+  shell: "gem install bundler --no-document"
+  args:
+    executable: "{{ shell_executable_default }}"
   when: bundler_check.rc != 0
-  changed_when: false
+
+- name: Display Bundler version
+  shell: "bundler --version"
+  register: bundler_version_output
+  when: bundler_check.rc != 0 and bundler_version_output.rc == 0
 
 - debug:
     msg: "Bundler version is {{ bundler_version_output.stdout }}"
