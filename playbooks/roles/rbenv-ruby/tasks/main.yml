@@ -1,0 +1,43 @@
+---
+- name: Set rbenv_root variable
+  set_fact:
+    rbenv_root: ~/.rbenv
+
+- name: Clone rbenv repository
+  git:
+    repo: https://github.com/rbenv/rbenv.git
+    dest: "{{ rbenv_root }}"
+    clone: yes
+    update: no
+
+- name: Configure rbenv for bash
+  lineinfile:
+    path: ~/.bashrc
+    line: 'eval "$(~/.rbenv/bin/rbenv init - bash)"'
+    insertafter: EOF
+    state: present
+
+- name: Configure rbenv for zsh
+  lineinfile:
+    path: ~/.zshrc
+    line: 'eval "$(~/.rbenv/bin/rbenv init - zsh)"'
+    insertafter: EOF
+    state: present
+
+- name: Clone ruby-build repository
+  git:
+    repo: https://github.com/rbenv/ruby-build.git
+    dest: "{{ rbenv_root }}/plugins/ruby-build"
+    clone: yes
+
+- name: Restart shell
+  command: "exec $SHELL"
+  args:
+    creates: "~/.ansible_shell_restart"
+
+- name: Check rbenv version
+  shell: "{{ rbenv_root }}/bin/rbenv --version"
+  register: rbenv_version_output
+
+- debug:
+    msg: "rbenv version is {{ rbenv_version_output.stdout }}"
