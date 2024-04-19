@@ -3,6 +3,12 @@
   set_fact:
     rbenv_root: ~/.rbenv
 
+- name: Set variables for Ruby installation
+  vars:
+    ruby_version: "2.7.4"
+    ruby_install_dir: "{{ rbenv_root }}/versions/{{ ruby_version }}"
+    shell_config_file: "{{ ansible_user_dir }}/.{{ shell_type }}rc"
+
 - name: Clone rbenv repository
   git:
     repo: https://github.com/rbenv/rbenv.git
@@ -10,31 +16,16 @@
     clone: yes
     update: no
 
-- name: Check if .zshrc exists
+- name: Check if shell config file exists
   stat:
-    path: ~/.zshrc
-  register: zshrc_check
+    path: "{{ shell_config_file }}"
+  register: shell_config_check
 
-- name: Configure rbenv for zsh if .zshrc exists
-  lineinfile:
-    path: ~/.zshrc
-    line: 'eval "$(~/.rbenv/bin/rbenv init - zsh)"'
-    insertafter: EOF
-    state: present
-  when: zshrc_check.stat.exists
-
-- name: Check if .bashrc exists
-  stat:
-    path: ~/.bashrc
-  register: bashrc_check
-
-- name: Configure rbenv for bash if .bashrc exists
-  lineinfile:
-    path: ~/.bashrc
-    line: 'eval "$(~/.rbenv/bin/rbenv init - bash)"'
-    insertafter: EOF
-    state: present
-  when: bashrc_check.stat.exists
+- name: Source shell config file if exists
+  shell: "source {{ shell_config_file }}"
+  args:
+    executable: "{{ shell_executable }}"
+  when: shell_config_check.stat.exists
 
 - name: Clone ruby-build repository
   git:
@@ -42,21 +33,27 @@
     dest: "{{ rbenv_root }}/plugins/ruby-build"
     clone: yes
 
-- name: Source ~/.bashrc if exists
-  shell: "source ~/.bashrc"
+- name: Install Ruby
+  shell: "{{ rbenv_root }}/bin/rbenv install {{ ruby_version }}"
   args:
-    executable: /bin/bash
-  when: bashrc_check.stat.exists
+    executable: "{{ shell_executable }}"
+    creates: "{{ ruby_install_dir }}"
 
-- name: Source ~/.zshrc if exists
-  shell: "source ~/.zshrc"
+- name: Set global Ruby version
+  shell: "{{ rbenv_root }}/bin/rbenv global {{ ruby_version }}"
   args:
-    executable: /bin/zsh
-  when: zshrc_check.stat.exists
+    executable: "{{ shell_executable }}"
 
-- name: Check rbenv version
-  shell: "{{ rbenv_root }}/bin/rbenv --version"
-  register: rbenv_version_output
+- name: Restart shell
+  command: "exec $SHELL"
+  creates: "~/.ansible_shell_restart"
+
+- name: Check installed Ruby version
+  shell: "ruby -v"
+  register: installed_ruby_version
+  args:
+    executable: "{{ shell_executable }}"
 
 - debug:
-    msg: "rbenv version is {{ rbenv_version_output.stdout }}"
+    msg: "Installed Ruby version is {{ installed_ruby_version.stdout }}"
+
