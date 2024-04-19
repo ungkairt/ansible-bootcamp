@@ -33,13 +33,13 @@
 
 - name: Check if shell config file exists
   stat:
-    path: "source {{ shell_config_file }}"
+    path: "{{ shell_config_file }}"
   register: shell_config_check
 
 - name: Source shell config file if exists
   shell: "source {{ shell_config_file }}"
   args:
-    executable: "{{ shell_executable }}"
+    executable: "{{ shell_executable_default }}"
   when: shell_config_check.stat.exists
 
 - name: Clone ruby-build repository
@@ -51,7 +51,7 @@
 - name: Restart shell
   shell: "source {{ shell_type }}"
   args:
-    executable: "{{ shell_executable }}"
+    executable: "{{ shell_executable_default }}"
   when: shell_config_check.stat.exists
 
 - name: Check rbenv version
@@ -78,28 +78,29 @@
 - name: Install Ruby if not found
   shell: "rbenv install {{ ruby_version }}"
   args:
-    executable: "{{ shell_executable }}"
+    executable: "{{ shell_executable_default }}"
   when: ruby_check.rc != 0
 
 - name: Set global Ruby version
   shell: "rbenv global {{ ruby_version }}"
   args:
-    executable: "{{ shell_executable }}"
+    executable: "{{ shell_executable_default }}"
   when: ruby_check.rc != 0  # Only set the global Ruby version if Ruby was installed
 
 - name: Rehash rbenv
   shell: "rbenv rehash"
   args:
-    executable: "{{ shell_executable }}"
+    executable: "{{ shell_executable_default }}"
   when: ruby_check.rc != 0  # Only rehash if Ruby was installed
 
 - name: Display Ruby version
   shell: "ruby -v"
   register: ruby_version_output
   args:
-    executable: "{{ shell_executable }}"
+    executable: "{{ shell_executable_default }}"
   ignore_errors: true
 
 - debug:
     msg: "Ruby version is {{ ruby_version_output.stdout }}"
   when: ruby_version_output.rc == 0
+
