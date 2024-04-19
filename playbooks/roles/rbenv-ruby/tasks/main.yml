@@ -3,12 +3,17 @@
   set_fact:
     rbenv_root: ~/.rbenv
 
-- name: Set variables for Ruby installation
-  vars:
-    ruby_version: "3.3.0"
+- name: Set ruby_version variable
+  set_fact:
+    ruby_version: "2.7.4"
+
+- name: Set ruby_install_dir variable
+  set_fact:
     ruby_install_dir: "{{ rbenv_root }}/versions/{{ ruby_version }}"
+
+- name: Set shell_config_file variable
+  set_fact:
     shell_config_file: "{{ ansible_user_dir }}/.{{ shell_type }}rc"
-    shell_executable: "/bin/bash"  # Assuming default shell is bash
 
 - name: Clone rbenv repository
   git:
