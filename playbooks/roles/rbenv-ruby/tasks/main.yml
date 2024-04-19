@@ -44,8 +44,7 @@
 
 - name: Restart shell
   command: "exec $SHELL"
-  args:
-    creates: "~/.ansible_shell_restart"
+  creates: "~/.ansible_shell_restart"
 
 - name: Check rbenv version
   shell: "{{ rbenv_root }}/bin/rbenv --version"
