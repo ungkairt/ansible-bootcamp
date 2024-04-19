@@ -144,3 +144,21 @@
     dest: ~/.gemrc
   when: gemrc_check.stat.exists == false
 
+- name: Check if bundler is installed
+  command: bundler --version
+  register: bundler_check
+  ignore_errors: true
+
+- name: Install bundler if not installed
+  command: gem install bundler --no-document
+  when: bundler_check.rc != 0
+
+- name: Display bundler version
+  command: bundler --version
+  register: bundler_version_output
+  when: bundler_check.rc != 0
+  changed_when: false
+
+- debug:
+    msg: "Bundler version is {{ bundler_version_output.stdout }}"
+  when: bundler_version_output.rc == 0
