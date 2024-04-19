@@ -175,5 +175,5 @@
   when: bundler_check.rc == 0
 
 - debug:
-    msg: "Bundler version is {{ bundler_version_output.stdout }}"
+    msg: "{{ bundler_version_output.stdout }}"
   when: bundler_version_output.rc == 0
