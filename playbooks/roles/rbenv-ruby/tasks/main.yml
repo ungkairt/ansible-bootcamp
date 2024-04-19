@@ -1,4 +1,24 @@
 ---
+- name: Define list of packages to install Ruby
+  set_fact:
+    required_packages:
+      - git
+      - curl
+      - libssl-dev
+      - libreadline-dev
+      - zlib1g-dev
+      - autoconf
+      - bison
+      - build-essential
+      - libyaml-dev
+      - libffi-dev
+      - libgdbm-dev
+      - libncurses5-dev
+      - libsqlite3-dev
+      - libtool
+      - pkg-config
+      - sqlite3
+
 - name: Set rbenv_root variable
   set_fact:
     rbenv_root: ~/.rbenv
@@ -25,25 +45,10 @@
     shell_config_file: "{{ ansible_user_dir }}/.{{ shell_type }}rc"
 
 - name: "Install required packages - Ruby {{ ruby_version }}"
-  become: true
+  become: yes
   apt:
-    name: "{{ packages }}"
+    name: "{{ required_packages }}"
     state: present
-  loop:
-    - libssl-dev
-    - libreadline-dev
-    - zlib1g-dev
-    - autoconf
-    - bison
-    - build-essential
-    - libyaml-dev
-    - libffi-dev
-    - libgdbm-dev
-    - libncurses5-dev
-    - libsqlite3-dev
-    - libtool
-    - pkg-config
-    - sqlite3
 
 - name: Clone rbenv repository
   git:
