@@ -39,29 +39,15 @@
     dest: "{{ rbenv_root }}/plugins/ruby-build"
     clone: yes
 
-- name: Install Ruby
-  shell: "{{ rbenv_root }}/bin/rbenv install {{ ruby_version }}"
-  args:
-    executable: "{{ shell_executable }}"
-    creates: "{{ ruby_install_dir }}"
-
-- name: Set global Ruby version
-  shell: "{{ rbenv_root }}/bin/rbenv global {{ ruby_version }}"
-  args:
-    executable: "{{ shell_executable }}"
-
 - name: Restart shell
   shell: "source {{ shell_type }}"
   args:
     executable: "{{ shell_executable }}"
-  creates: "~/.ansible_shell_restart"
+  when: shell_config_check.stat.exists
 
-- name: Check installed Ruby version
-  shell: "ruby -v"
-  register: installed_ruby_version
-  args:
-    executable: "{{ shell_executable }}"
+- name: Check rbenv version
+  shell: "{{ rbenv_root }}/bin/rbenv --version"
+  register: rbenv_version_output
 
 - debug:
-    msg: "Installed Ruby version is {{ installed_ruby_version.stdout }}"
-
+    msg: "rbenv version is {{ rbenv_version_output.stdout }}"
