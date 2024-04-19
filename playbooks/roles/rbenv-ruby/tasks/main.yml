@@ -43,7 +43,7 @@
     clone: yes
 
 - name: Restart shell
-  command: "exec $SHELL"
+  command: "source ~/.bashrc"
   creates: "~/.ansible_shell_restart"
 
 - name: Check rbenv version
