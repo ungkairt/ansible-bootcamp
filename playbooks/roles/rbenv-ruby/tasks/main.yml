@@ -5,7 +5,7 @@
 
 - name: Set ruby_version variable
   set_fact:
-    ruby_version: "2.7.4"
+    ruby_version: "3.3.0"
 
 - name: Set ruby_install_dir variable
   set_fact:
@@ -51,7 +51,9 @@
     executable: "{{ shell_executable }}"
 
 - name: Restart shell
-  command: "exec $SHELL"
+  shell: "source {{ shell_type }}"
+  args:
+    executable: "{{ shell_executable }}"
   creates: "~/.ansible_shell_restart"
 
 - name: Check installed Ruby version
