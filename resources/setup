@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
-sudo apt install software-properties-common
+
+# Update package index and install necessary tools
+sudo apt update
+sudo apt install -y software-properties-common
+
+# Add Ansible repository and update package index again
 sudo add-apt-repository --yes --update ppa:ansible/ansible
-sudo apt install ansible
-git clone https://github.com/ppp3ppj/ansible-bootcamp $1
+sudo apt update
+
+# Install Ansible
+sudo apt install -y ansible
