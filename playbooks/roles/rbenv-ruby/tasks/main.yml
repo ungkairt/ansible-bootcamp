@@ -60,3 +60,10 @@
 
 - debug:
     msg: "rbenv version is {{ rbenv_version_output.stdout }}"
+
+- name: Check if Ruby is installed
+  command: ruby -v
+  ignore_errors: true
+  register: ruby_check
+
+
