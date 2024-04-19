@@ -42,11 +42,17 @@
     dest: "{{ rbenv_root }}/plugins/ruby-build"
     clone: yes
 
-- name: Source bashrc
+- name: Source ~/.bashrc if exists
   shell: "source ~/.bashrc"
   args:
-    executable: /bin/bash
-  register: sourced
+    executable: /bin/env bash
+  when: bashrc_check.stat.exists
+
+- name: Source ~/.zshrc if exists
+  shell: "source ~/.zshrc"
+  args:
+    executable: /bin/env zsh
+  when: zshrc_check.stat.exists
 
 - name: Check rbenv version
   shell: "{{ rbenv_root }}/bin/rbenv --version"
