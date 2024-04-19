@@ -47,7 +47,6 @@
   args:
     executable: /bin/bash
   register: sourced
-  sudo: false
 
 - name: Check rbenv version
   shell: "{{ rbenv_root }}/bin/rbenv --version"
