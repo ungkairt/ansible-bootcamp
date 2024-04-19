@@ -45,13 +45,13 @@
 - name: Source ~/.bashrc if exists
   shell: "source ~/.bashrc"
   args:
-    executable: /bin/env bash
+    executable: /bin/bash
   when: bashrc_check.stat.exists
 
 - name: Source ~/.zshrc if exists
   shell: "source ~/.zshrc"
   args:
-    executable: /bin/env zsh
+    executable: /bin/zsh
   when: zshrc_check.stat.exists
 
 - name: Check rbenv version
