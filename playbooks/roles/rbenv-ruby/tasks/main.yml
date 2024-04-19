@@ -62,8 +62,18 @@
     msg: "rbenv version is {{ rbenv_version_output.stdout }}"
 
 - name: Check if Ruby is installed
-  command: ruby -v
-  ignore_errors: true
+  shell: "ruby -v"
   register: ruby_check
+  changed_when: false
+  ignore_errors: true
+
+- debug:
+    msg: "Ruby is installed with version {{ ruby_check.stdout }}"
+  when: ruby_check.rc == 0
+
+- debug:
+    msg: "Ruby is not installed"
+  when: ruby_check.rc != 0
+
 
 
