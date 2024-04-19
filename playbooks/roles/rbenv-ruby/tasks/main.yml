@@ -10,19 +10,31 @@
     clone: yes
     update: no
 
-- name: Configure rbenv for bash
-  lineinfile:
-    path: ~/.bashrc
-    line: 'eval "$(~/.rbenv/bin/rbenv init - bash)"'
-    insertafter: EOF
-    state: present
+- name: Check if .zshrc exists
+  stat:
+    path: ~/.zshrc
+  register: zshrc_check
 
-- name: Configure rbenv for zsh
+- name: Configure rbenv for zsh if .zshrc exists
   lineinfile:
     path: ~/.zshrc
     line: 'eval "$(~/.rbenv/bin/rbenv init - zsh)"'
     insertafter: EOF
     state: present
+  when: zshrc_check.stat.exists
+
+- name: Check if .bashrc exists
+  stat:
+    path: ~/.bashrc
+  register: bashrc_check
+
+- name: Configure rbenv for bash if .bashrc exists
+  lineinfile:
+    path: ~/.bashrc
+    line: 'eval "$(~/.rbenv/bin/rbenv init - bash)"'
+    insertafter: EOF
+    state: present
+  when: bashrc_check.stat.exists
 
 - name: Clone ruby-build repository
   git:
