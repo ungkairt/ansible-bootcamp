@@ -42,9 +42,12 @@
     dest: "{{ rbenv_root }}/plugins/ruby-build"
     clone: yes
 
-- name: Restart shell
-  command: "source ~/.bashrc"
-  creates: "~/.ansible_shell_restart"
+- name: Source bashrc
+  shell: "source ~/.bashrc"
+  args:
+    executable: /bin/bash
+  register: sourced
+  sudo: false
 
 - name: Check rbenv version
   shell: "{{ rbenv_root }}/bin/rbenv --version"
