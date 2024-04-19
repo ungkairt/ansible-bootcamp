@@ -171,7 +171,8 @@
 - name: Display Bundler version
   shell: "bundler --version"
   register: bundler_version_output
-  when: bundler_check.rc != 0 and bundler_version_output.rc == 0
+  ignore_errors: true
+  when: bundler_check.rc == 0
 
 - debug:
     msg: "Bundler version is {{ bundler_version_output.stdout }}"
