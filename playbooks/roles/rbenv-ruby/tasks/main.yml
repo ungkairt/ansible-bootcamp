@@ -24,6 +24,26 @@
   set_fact:
     shell_config_file: "{{ ansible_user_dir }}/.{{ shell_type }}rc"
 
+- name: "Install required software - Ruby {{ ruby_version }}"
+  become: true
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      zlib1g-dev
+      build-essential
+      libssl-dev
+      libreadline-dev
+      libyaml-dev
+      libsqlite3-dev
+      sqlite3
+      libxml2-dev
+      libxslt1-dev
+      libcurl4-openssl-dev
+      software-properties-common
+      libffi-dev
+
 - name: Clone rbenv repository
   git:
     repo: https://github.com/rbenv/rbenv.git
