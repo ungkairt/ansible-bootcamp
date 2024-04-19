@@ -3,6 +3,10 @@
   set_fact:
     rbenv_root: ~/.rbenv
 
+- name: Set default values for variables
+  set_fact:
+    shell_executable_default: "/bin/bash"  # Set default shell executable to /bin/bash
+
 - name: Set ruby_version variable
   set_fact:
     ruby_version: "3.3.0"
@@ -24,7 +28,7 @@
 
 - name: Check if shell config file exists
   stat:
-    path: "{{ shell_config_file }}"
+    path: "source {{ shell_config_file }}"
   register: shell_config_check
 
 - name: Source shell config file if exists
