@@ -75,5 +75,31 @@
     msg: "Ruby is not installed"
   when: ruby_check.rc != 0
 
+- name: Install Ruby if not found
+  shell: "rbenv install {{ ruby_version }}"
+  args:
+    executable: "{{ shell_executable }}"
+  when: ruby_check.rc != 0
 
+- name: Set global Ruby version
+  shell: "rbenv global {{ ruby_version }}"
+  args:
+    executable: "{{ shell_executable }}"
+  when: ruby_check.rc != 0  # Only set the global Ruby version if Ruby was installed
 
+- name: Rehash rbenv
+  shell: "rbenv rehash"
+  args:
+    executable: "{{ shell_executable }}"
+  when: ruby_check.rc != 0  # Only rehash if Ruby was installed
+
+- name: Display Ruby version
+  shell: "ruby -v"
+  register: ruby_version_output
+  args:
+    executable: "{{ shell_executable }}"
+  ignore_errors: true
+
+- debug:
+    msg: "Ruby version is {{ ruby_version_output.stdout }}"
+  when: ruby_version_output.rc == 0
