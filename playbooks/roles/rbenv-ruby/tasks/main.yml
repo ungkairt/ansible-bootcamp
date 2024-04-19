@@ -149,11 +149,6 @@
   register: bundler_check
   ignore_errors: true
 
-- name: Check if Bundler is installed
-  shell: "bundler --version"
-  register: bundler_check
-  ignore_errors: true
-
 - debug:
     msg: "Bundler is installed with version {{ bundler_check.stdout }}"
   when: bundler_check.rc == 0
