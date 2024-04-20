@@ -1,5 +1,6 @@
 - name: Check if Ruby is installed for install bundler
-  shell: "ruby -v"
+  shell: |
+    {{ ansible_user_dir }}/.rbenv/shims/ruby -v
   register: ruby_installed
   changed_when: false
   ignore_errors: true
