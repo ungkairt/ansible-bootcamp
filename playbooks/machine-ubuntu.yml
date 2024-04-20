@@ -18,7 +18,7 @@
           when: not initial_installed_check.stat.exists
 
         - include_role:
-            name: rbenv-ruby
+            name: ansible-rbenv-ruby
           when: not initial_installed_check.stat.exists
 
         - name: Provide message for user
@@ -48,5 +48,5 @@
         ruby_installed: "{{ ruby_check.rc == 0 }}"
 
     - include_role:
-        name: software-common-apt
+        name: ansible-bundler-rails
       when: ruby_installed
