@@ -17,8 +17,8 @@ required_packages:
   - pkg-config
   - sqlite3
 
-rbenv_root: ~/.rbenv
 ansible_user_dir: "{{ lookup('env', 'HOME') }}"
+rbenv_root: "{{ ansible_user_dir }}/.rbenv"
 
 shell_executable_default: "/bin/bash"  # Set default shell executable to /bin/bash
 shell_type_default: "bash"  # Set default shell type to bash

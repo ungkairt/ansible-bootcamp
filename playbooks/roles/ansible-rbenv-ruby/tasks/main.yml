@@ -12,11 +12,6 @@
     clone: yes
     update: no
 
-- name: Check if shell config file exists
-  stat:
-    path: "{{ shell_config_file }}"
-  register: shell_config_check
-
 - name: Add rbenv init to shell configuration file if not already added
   block:
     - name: Set rbenv init command for the shell
@@ -29,37 +24,25 @@
 
     - name: Add rbenv init to ~/.bashrc if not already there (bash)
       lineinfile:
-        path: ~/.bashrc
+        path: "{{ ansible_user_dir }}/.bashrc"
         line: "{{ rbenv_init_command }}"
         create: yes
         insertafter: EOF
-      when: shell_type == "bash" and shell_config_check.stat.exists and rbenv_init_command is defined
+      when: shell_type == "bash" and rbenv_init_command is defined
 
     - name: Add rbenv init to ~/.zshrc if not already there (zsh)
       lineinfile:
-        path: ~/.zshrc
+        path: "{{ ansible_user_dir }}/.zshrc"
         line: "{{ rbenv_init_command }}"
         create: yes
         insertafter: EOF
-      when: shell_type == "zsh" and shell_config_check.stat.exists and rbenv_init_command is defined
-  when: shell_config_check.stat.exists
+      when: shell_type == "zsh" and rbenv_init_command is defined
 
 - name: Clone ruby-build repository
   git:
     repo: https://github.com/rbenv/ruby-build.git
     dest: "{{ rbenv_root }}/plugins/ruby-build"
     clone: yes
-  when: shell_config_check.stat.exists
-
-- name: Restart shell
-  shell: "source {{ shell_config_file }}"
-  register: output_source_shell
-  args:
-    executable: "{{ shell_executable_default }}"
-  when: shell_config_check.stat.exists
-
-- debug:
-    msg: "{{ output_source_shell }}"
 
 - name: Check rbenv version
   shell: "{{ rbenv_root }}/bin/rbenv --version"
@@ -68,23 +51,12 @@
 - debug:
     msg: "rbenv version is {{ rbenv_version_output.stdout }}"
 
-- name: Check if ruby {{ ruby_version }} is installed
-  shell: |
-    {{ ansible_user_dir }}/.rbenv/shims/ruby -v
-  register: ruby_check
-  changed_when: false
-  ignore_errors: true
-
-- debug:
-    msg: "{{ ruby_check.stdout }}"
-
 - name: Install ruby {{ ruby_version }}
   command: "{{ rbenv_root }}/bin/rbenv install {{ ruby_version }}"
   args:
     executable: "{{ shell_executable_default }}"
   environment:
     PATH: "{{ rbenv_root }}/bin:{{ rbenv_root }}/shims:{{ ansible_env.PATH }}"
-  when: not ruby_check
 
 - name: Set ruby version as global default
   command: "{{ rbenv_root }}/bin/rbenv global {{ ruby_version }}"
@@ -92,4 +64,3 @@
     executable: "{{ shell_executable_default }}"
   environment:
     PATH: "{{ rbenv_root }}/bin:{{ rbenv_root }}/shims:{{ ansible_env.PATH }}"
-  when: not ruby_check

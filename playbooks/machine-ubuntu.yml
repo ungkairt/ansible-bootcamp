@@ -37,6 +37,9 @@
             dest: "{{ ansible_user_dir }}/initial_installed.txt"
           when: not initial_installed_check.stat.exists
 
+        - name: End the play after install ruby and rbenv please source your shell for next install
+          ansible.builtin.meta: end_play
+
       when: initial_installed_check.stat.exists|bool == false
 
     - include_role:
