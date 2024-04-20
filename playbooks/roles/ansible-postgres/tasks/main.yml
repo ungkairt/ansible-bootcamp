@@ -6,6 +6,8 @@
   ignore_errors: true
 
 - name: Install dependencies for PostgreSQL
+  become: yes
+  become_method: sudo
   apt:
     name:
       - openssl
@@ -17,6 +19,8 @@
   when: psql_check.rc != 0
 
 - name: Install required packages (curl and ca-certificates)
+  become: yes
+  become_method: sudo
   apt:
     name: "{{ item }}"
     state: present
@@ -26,38 +30,52 @@
   when: psql_check.rc != 0
 
 - name: Create directory for PostgreSQL repository key
+  become: yes
+  become_method: sudo
   file:
     path: /usr/share/postgresql-common/pgdg
     state: directory
   when: psql_check.rc != 0
 
 - name: Download PostgreSQL repository signing key
+  become: yes
+  become_method: sudo
   get_url:
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
     dest: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
   when: psql_check.rc != 0
 
 - name: Add PostgreSQL repository to sources.list.d
+  become: yes
+  become_method: sudo
   shell: |
     echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
   when: psql_check.rc != 0
 
 - name: Update package lists
+  become: yes
+  become_method: sudo
   apt:
     update_cache: yes
   when: psql_check.rc != 0
 
 - name: Install PostgreSQL {{ postgresql_version }}
+  become: yes
+  become_method: sudo
   apt:
     name: "postgresql-{{ postgresql_version }}"
     state: present  # Use 'present' for idempotence
   when: psql_check.rc != 0
 
 - name: Start and enable PostgreSQL service
+  become: yes
+  become_method: sudo
   command: "service postgresql start"
   when: psql_check.rc != 0
 
 - name: Restart PostgreSQL service if psql is installed and version is not as expected
+  become: yes
+  become_method: sudo
   command: "service postgresql restart"
   register: service_psql_status
   when:

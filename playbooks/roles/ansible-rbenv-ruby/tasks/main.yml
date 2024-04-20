@@ -44,6 +44,12 @@
     dest: "{{ rbenv_root }}/plugins/ruby-build"
     clone: yes
 
+- name: Source shell
+  shell: |
+    source {{ shell_config_file }} && exec $SHELL
+  args:
+    executable: "{{ shell_executable_default }}"
+
 - name: Check rbenv version
   shell: "{{ rbenv_root }}/bin/rbenv --version"
   register: rbenv_version_output
@@ -52,7 +58,7 @@
     msg: "rbenv version is {{ rbenv_version_output.stdout }}"
 
 - name: Install ruby {{ ruby_version }}
-  command: "{{ rbenv_root }}/bin/rbenv install {{ ruby_version }}"
+  command: "{{ rbenv_root }}/bin/rbenv install {{ ruby_version }} --verbose"
   args:
     executable: "{{ shell_executable_default }}"
   environment:
