@@ -88,11 +88,12 @@
         insertafter: EOF
       when: shell_type == "zsh" and shell_config_check.stat.exists and rbenv_init_command is defined
 
-    - name: Source updated shell config file
-      shell: "{{ rbenv_init_command }}"
+    - name: Source shell config file and restart shell
+      shell: |
+        source {{ shell_config_file }} && exec $SHELL
       args:
         executable: "{{ shell_executable_default }}"
-      when: shell_config_check.stat.exists and rbenv_init_command is defined
+      when: shell_config_check.stat.exists
   when: shell_config_check.stat.exists
 
 - name: Clone ruby-build repository
@@ -106,9 +107,13 @@
 
 - name: Restart shell
   shell: "source {{ shell_config_file }}"
+  register: output_source_shell
   args:
     executable: "{{ shell_executable_default }}"
   when: shell_config_check.stat.exists
+
+- debug:
+    msg: "{{ output_source_shell }}"
 
 - name: Check rbenv version
   shell: "{{ rbenv_root }}/bin/rbenv --version"
