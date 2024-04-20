@@ -62,30 +62,40 @@
     path: "{{ shell_config_file }}"
   register: shell_config_check
 
+
 - name: Add rbenv init to shell configuration file if not already added
   block:
     - name: Set rbenv init command for the shell
       set_fact:
         rbenv_init_command: "eval \"$(~/.rbenv/bin/rbenv init - {{ shell_type }})\""
 
+    - name: Debug rbenv init command
+      debug:
+        msg: "rbenv init command is: {{ rbenv_init_command }}"
+
     - name: Add rbenv init to ~/.bashrc if not already there (bash)
-      shell: |
-        if ! grep -qxF "{{ rbenv_init_command }}" ~/.bashrc; then
-          echo "{{ rbenv_init_command }}" >> ~/.bashrc
-        fi
+      lineinfile:
+        path: ~/.bashrc
+        line: "{{ rbenv_init_command }}"
+        create: yes
+        insertafter: EOF
       when: shell_type == "bash" and shell_config_check.stat.exists and rbenv_init_command is defined
       check_mode: yes
 
     - name: Add rbenv init to ~/.zshrc if not already there (zsh)
-      shell: |
-        if ! grep -qxF "{{ rbenv_init_command }}" ~/.zshrc; then
-          echo "{{ rbenv_init_command }}" >> ~/.zshrc
-        fi
+      lineinfile:
+        path: ~/.zshrc
+        line: "{{ rbenv_init_command }}"
+        create: yes
+        insertafter: EOF
       when: shell_type == "zsh" and shell_config_check.stat.exists and rbenv_init_command is defined
       check_mode: yes
 
   when: shell_config_check.stat.exists
   check_mode: yes
+
+
+
 
 - name: Source shell config file if exists
   shell: "source {{ shell_config_file }}"
