@@ -1,7 +1,54 @@
 ---
+- name: Define list of packages to install Ruby
+  set_fact:
+    required_packages:
+      - git
+      - curl
+      - libssl-dev
+      - libreadline-dev
+      - zlib1g-dev
+      - autoconf
+      - bison
+      - build-essential
+      - libyaml-dev
+      - libffi-dev
+      - libgdbm-dev
+      - libncurses5-dev
+      - libsqlite3-dev
+      - libtool
+      - pkg-config
+      - sqlite3
+
 - name: Set rbenv_root variable
   set_fact:
     rbenv_root: ~/.rbenv
+
+- name: Set default values for variables
+  set_fact:
+    shell_executable_default: "/bin/bash"  # Set default shell executable to /bin/bash
+    shell_type_default: "bash"  # Set default shell type to bash
+
+- name: Set ruby_version variable
+  set_fact:
+    ruby_version: "3.3.0"
+
+- name: Set ruby_install_dir variable
+  set_fact:
+    ruby_install_dir: "{{ rbenv_root }}/versions/{{ ruby_version }}"
+
+- name: Set shell_type variable
+  set_fact:
+    shell_type: "{{ shell_type_default | default(omit) }}"  # Use default value if not defined
+
+- name: Set shell_config_file variable
+  set_fact:
+    shell_config_file: "{{ ansible_user_dir }}/.{{ shell_type }}rc"
+
+- name: "Install required packages - Ruby {{ ruby_version }}"
+  become: yes
+  apt:
+    name: "{{ required_packages }}"
+    state: present
 
 - name: Clone rbenv repository
   git:
@@ -10,31 +57,16 @@
     clone: yes
     update: no
 
-- name: Check if .zshrc exists
+- name: Check if shell config file exists
   stat:
-    path: ~/.zshrc
-  register: zshrc_check
+    path: "{{ shell_config_file }}"
+  register: shell_config_check
 
-- name: Configure rbenv for zsh if .zshrc exists
-  lineinfile:
-    path: ~/.zshrc
-    line: 'eval "$(~/.rbenv/bin/rbenv init - zsh)"'
-    insertafter: EOF
-    state: present
-  when: zshrc_check.stat.exists
-
-- name: Check if .bashrc exists
-  stat:
-    path: ~/.bashrc
-  register: bashrc_check
-
-- name: Configure rbenv for bash if .bashrc exists
-  lineinfile:
-    path: ~/.bashrc
-    line: 'eval "$(~/.rbenv/bin/rbenv init - bash)"'
-    insertafter: EOF
-    state: present
-  when: bashrc_check.stat.exists
+- name: Source shell config file if exists
+  shell: "source {{ shell_config_file }}"
+  args:
+    executable: "{{ shell_executable_default }}"
+  when: shell_config_check.stat.exists
 
 - name: Clone ruby-build repository
   git:
@@ -42,17 +74,11 @@
     dest: "{{ rbenv_root }}/plugins/ruby-build"
     clone: yes
 
-- name: Source ~/.bashrc if exists
-  shell: "source ~/.bashrc"
+- name: Restart shell
+  shell: "source {{ shell_config_file }}"
   args:
-    executable: /bin/bash
-  when: bashrc_check.stat.exists
-
-- name: Source ~/.zshrc if exists
-  shell: "source ~/.zshrc"
-  args:
-    executable: /bin/zsh
-  when: zshrc_check.stat.exists
+    executable: "{{ shell_executable_default }}"
+  when: shell_config_check.stat.exists
 
 - name: Check rbenv version
   shell: "{{ rbenv_root }}/bin/rbenv --version"
@@ -60,3 +86,89 @@
 
 - debug:
     msg: "rbenv version is {{ rbenv_version_output.stdout }}"
+
+- name: Check if Ruby is installed
+  shell: "ruby -v"
+  register: ruby_check
+  changed_when: false
+  ignore_errors: true
+
+- debug:
+    msg: "Ruby is installed with version {{ ruby_check.stdout }}"
+  when: ruby_check.rc == 0
+
+- debug:
+    msg: "Ruby is not installed"
+  when: ruby_check.rc != 0
+
+- name: Install Ruby if not found
+  shell: "rbenv install {{ ruby_version }}"
+  args:
+    executable: "{{ shell_executable_default }}"
+  when: ruby_check.rc != 0
+
+- name: Set global Ruby version
+  shell: "rbenv global {{ ruby_version }}"
+  args:
+    executable: "{{ shell_executable_default }}"
+  when: ruby_check.rc != 0  # Only set the global Ruby version if Ruby was installed
+
+- name: Rehash rbenv
+  shell: "rbenv rehash"
+  args:
+    executable: "{{ shell_executable_default }}"
+  when: ruby_check.rc != 0  # Only rehash if Ruby was installed
+
+- name: Display Ruby version
+  shell: "ruby -v"
+  register: ruby_version_output
+  args:
+    executable: "{{ shell_executable_default }}"
+  ignore_errors: true
+
+- debug:
+    msg: "Ruby version is {{ ruby_version_output.stdout }}"
+  when: ruby_version_output.rc == 0
+
+
+- name: Check if .gemrc file exists
+  stat:
+    path: ~/.gemrc
+  register: gemrc_check
+
+- name: Create .gemrc file if it doesn't exist
+  copy:
+    content: |
+      # ~/.gemrc
+      gem: --no-document
+    dest: ~/.gemrc
+  when: gemrc_check.stat.exists == false
+
+- name: Check if bundler is installed
+  command: bundler --version
+  register: bundler_check
+  ignore_errors: true
+
+- debug:
+    msg: "Bundler is installed with version {{ bundler_check.stdout }}"
+  when: bundler_check.rc == 0
+
+- debug:
+    msg: "Bundler is not installed"
+  when: bundler_check.rc != 0
+
+- name: Install Bundler if not found
+  shell: "gem install bundler --no-document"
+  args:
+    executable: "{{ shell_executable_default }}"
+  when: bundler_check.rc != 0
+
+- name: Display Bundler version
+  shell: "bundler --version"
+  register: bundler_version_output
+  ignore_errors: true
+  when: bundler_check.rc == 0
+
+- debug:
+    msg: "{{ bundler_version_output.stdout }}"
+  when: bundler_version_output.rc == 0
