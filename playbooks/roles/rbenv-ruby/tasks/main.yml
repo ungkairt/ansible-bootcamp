@@ -62,7 +62,6 @@
     path: "{{ shell_config_file }}"
   register: shell_config_check
 
-
 - name: Add rbenv init to shell configuration file if not already added
   block:
     - name: Set rbenv init command for the shell
@@ -80,7 +79,6 @@
         create: yes
         insertafter: EOF
       when: shell_type == "bash" and shell_config_check.stat.exists and rbenv_init_command is defined
-      check_mode: yes
 
     - name: Add rbenv init to ~/.zshrc if not already there (zsh)
       lineinfile:
@@ -89,13 +87,7 @@
         create: yes
         insertafter: EOF
       when: shell_type == "zsh" and shell_config_check.stat.exists and rbenv_init_command is defined
-      check_mode: yes
-
   when: shell_config_check.stat.exists
-  check_mode: yes
-
-
-
 
 - name: Source shell config file if exists
   shell: "source {{ shell_config_file }}"
