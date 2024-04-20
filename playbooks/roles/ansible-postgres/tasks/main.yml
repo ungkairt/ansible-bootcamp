@@ -54,19 +54,19 @@
   when: psql_check.rc != 0
 
 - name: Start and enable PostgreSQL service
-  service:
-    name: postgresql
-    state: started
-    enabled: yes
+  command: "service postgresql start"
   when: psql_check.rc != 0
 
 - name: Restart PostgreSQL service if psql is installed and version is not as expected
-  service:
-    name: postgresql
-    state: restarted
+  command: "service postgresql restart"
+  register: service_psql_status
   when:
     - psql_check.rc == 0  # psql is installed
-    - psql_check.stdout is defined and psql_check.stdout.find(postgresql_version) == -1  # Version doesn't match expected
+
+- debug:
+    msg: "{{ service_psql_status }}"
+  when:
+    - psql_check.rc == 0  # psql is installed
 
 - name: Ensure user has access to PostgreSQL as a superuser
   become: true
@@ -76,5 +76,25 @@
     password: "{{ db_password }}"
     role_attr_flags: SUPERUSER
     state: present
-  when: psql_check.rc != 0
+  when:
+    - psql_check.rc == 0  # psql is installed
+    - not user_exists.rc  # user does not exist
 
+- name: Check if the user exists in PostgreSQL
+  become: true
+  become_user: postgres
+  shell: "psql -tAc \"SELECT 1 FROM pg_roles WHERE rolname='{{ db_user }}'\""
+  register: user_exists
+  ignore_errors: true
+
+- name: Ensure user has access to PostgreSQL as a superuser
+  become: true
+  become_user: postgres
+  postgresql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    role_attr_flags: SUPERUSER
+    state: present
+  when:
+    - psql_check.rc == 0  # psql is installed
+    - user_exists.rc != 0  # user does not exist
