@@ -13,6 +13,3 @@ sudo apt install -y ansible
 
 # Clone Ansible bootcamp repository into the current directory
 git clone https://github.com/ppp3ppj/ansible-bootcamp "$PWD"/ansible-bootcamp
-
-# Navigate into the cloned directory
-cd ansible-bootcamp || exit
