@@ -39,18 +39,8 @@
 
       when: initial_installed_check.stat.exists|bool == false
 
-    - name: Check if Ruby is installed
-      shell: "ruby -v"
-      register: ruby_check
-      changed_when: false
-      ignore_errors: true
-
-    - set_fact:
-        ruby_installed: "{{ ruby_check.rc == 0 }}"
-
     - include_role:
         name: ansible-bundler-rails
-      when: ruby_installed
 
     - include_role:
         name: ansible-postgres

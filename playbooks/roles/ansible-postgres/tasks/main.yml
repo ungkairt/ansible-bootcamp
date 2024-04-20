@@ -8,7 +8,6 @@
 - name: Install dependencies for PostgreSQL
   apt:
     name:
-      - bash
       - openssl
       - libssl-dev
       - libssl-doc
@@ -48,7 +47,7 @@
     update_cache: yes
   when: psql_check.rc != 0
 
-- name: Install PostgreSQL
+- name: Install PostgreSQL {{ postgresql_version }}
   apt:
     name: "postgresql-{{ postgresql_version }}"
     state: present  # Use 'present' for idempotence

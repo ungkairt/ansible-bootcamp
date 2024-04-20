@@ -139,7 +139,7 @@
     path: "{{ ruby_install_dir }}"
   register: ruby_version_dir_stat
 
-- name: Install ruby
+- name: Install ruby {{ ruby_version }}
   when: not ruby_version_dir_stat.stat.exists # Avoid rebuilding ruby because it takes a really long time
   command: "{{ rbenv_root }}/bin/rbenv install {{ ruby_version }}"
   args:
