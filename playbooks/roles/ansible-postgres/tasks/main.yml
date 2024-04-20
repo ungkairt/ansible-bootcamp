@@ -60,6 +60,14 @@
     enabled: yes
   when: psql_check.rc != 0
 
+- name: Restart PostgreSQL service if psql is installed and version is not as expected
+  service:
+    name: postgresql
+    state: restarted
+  when:
+    - psql_check.rc == 0  # psql is installed
+    - psql_check.stdout is defined and psql_check.stdout.find(postgresql_version) == -1  # Version doesn't match expected
+
 - name: Ensure user has access to PostgreSQL as a superuser
   become: true
   become_user: postgres
