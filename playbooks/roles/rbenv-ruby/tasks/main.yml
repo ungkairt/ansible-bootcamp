@@ -57,6 +57,11 @@
     clone: yes
     update: no
 
+- name: Check if shell config file exists
+  stat:
+    path: "{{ shell_config_file }}"
+  register: shell_config_check
+
 - name: Add rbenv init to shell configuration file if not already added
   block:
     - name: Set rbenv init command for the shell
@@ -83,10 +88,6 @@
   when: shell_config_check.stat.exists
   check_mode: yes
 
-- name: Check if shell config file exists
-  stat:
-    path: "{{ shell_config_file }}"
-  register: shell_config_check
 
 - name: Source shell config file if exists
   shell: "source {{ shell_config_file }}"
