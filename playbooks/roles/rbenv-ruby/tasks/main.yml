@@ -76,18 +76,28 @@
 
 - name: Add rbenv init to shell configuration file if not already added
   block:
-    - name: Read shell configuration file
-      slurp:
-        path: "{{ shell_config_file }}"
-      register: shell_config_content
+    - name: Set rbenv init command for the shell
+      set_fact:
+        rbenv_init_command: "eval \"$(~/.rbenv/bin/rbenv init - {{ shell_type }})\""
 
-    - name: Add rbenv init to shell config if not already there
+    - name: Add rbenv init to ~/.bashrc if not already there (bash)
       lineinfile:
-        path: "{{ shell_config_file }}"
-        line: "eval \"$(~/.rbenv/bin/rbenv init - {{ shell_type }})\""
+        path: ~/.bashrc
+        line: "{{ rbenv_init_command }}"
         create: yes
         insertafter: EOF
-      when: shell_type is defined and shell_config_content['content'] | regex_search('\\n\\s*EOF\\s*\\Z') | bool
+      when: shell_type == "bash" and shell_config_check.stat.exists and rbenv_init_command is defined
+      check_mode: yes
+
+    - name: Add rbenv init to ~/.zshrc if not already there (zsh)
+      lineinfile:
+        path: ~/.zshrc
+        line: "{{ rbenv_init_command }}"
+        create: yes
+        insertafter: EOF
+      when: shell_type == "zsh" and shell_config_check.stat.exists and rbenv_init_command is defined
+      check_mode: yes
+
   when: shell_config_check.stat.exists
   check_mode: yes
 
