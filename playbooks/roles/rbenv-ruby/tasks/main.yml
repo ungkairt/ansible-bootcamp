@@ -88,17 +88,9 @@
         insertafter: EOF
       when: shell_type == "zsh" and shell_config_check.stat.exists and rbenv_init_command is defined
 
-    - name: Create source_and_restart.sh script
-      copy:
-        content: |
-          #!/bin/bash
-          source {{ shell_config_file }}
-          source {{ shell_config_file }}
-        dest: "{{ ansible_user_dir }}/source_and_restart.sh"
-        mode: "0755"
-
     - name: Source shell config file and restart shell
-      command: "{{ ansible_user_dir }}/source_and_restart.sh"
+      shell: |
+        source {{ shell_config_file }} && exec $SHELL
       args:
         executable: "{{ shell_executable_default }}"
       when: shell_config_check.stat.exists
