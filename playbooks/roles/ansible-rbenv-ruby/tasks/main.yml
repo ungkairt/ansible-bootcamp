@@ -69,7 +69,8 @@
     msg: "rbenv version is {{ rbenv_version_output.stdout }}"
 
 - name: Check if ruby {{ ruby_version }} is installed
-  shell: "{{ rbenv_root }}/shims/ruby -v"
+  shell: |
+    {{ ansible_user_dir }}/.rbenv/shims/ruby -v
   register: ruby_check
   changed_when: false
   ignore_errors: true
