@@ -57,23 +57,6 @@
     clone: yes
     update: no
 
-- name: Check if shell config file exists
-  stat:
-    path: "{{ shell_config_file }}"
-  register: shell_config_check
-
-- name: Source shell config file if exists
-  shell: "source {{ shell_config_file }}"
-  args:
-    executable: "{{ shell_executable_default }}"
-  when: shell_config_check.stat.exists
-
-- name: Clone ruby-build repository
-  git:
-    repo: https://github.com/rbenv/ruby-build.git
-    dest: "{{ rbenv_root }}/plugins/ruby-build"
-    clone: yes
-
 - name: Add rbenv init to shell configuration file if not already added
   block:
     - name: Set rbenv init command for the shell
@@ -97,6 +80,25 @@
         insertafter: EOF
       when: shell_type == "zsh" and shell_config_check.stat.exists and rbenv_init_command is defined
       check_mode: yes
+  when: shell_config_check.stat.exists
+  check_mode: yes
+
+- name: Check if shell config file exists
+  stat:
+    path: "{{ shell_config_file }}"
+  register: shell_config_check
+
+- name: Source shell config file if exists
+  shell: "source {{ shell_config_file }}"
+  args:
+    executable: "{{ shell_executable_default }}"
+  when: shell_config_check.stat.exists
+
+- name: Clone ruby-build repository
+  git:
+    repo: https://github.com/rbenv/ruby-build.git
+    dest: "{{ rbenv_root }}/plugins/ruby-build"
+    clone: yes
 
   when: shell_config_check.stat.exists
   check_mode: yes
