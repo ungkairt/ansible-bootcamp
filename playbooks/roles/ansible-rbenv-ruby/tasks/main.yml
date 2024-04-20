@@ -75,6 +75,9 @@
   changed_when: false
   ignore_errors: true
 
+- debug:
+    msg: "{{ ruby_check.stdout }}"
+
 - name: Install ruby {{ ruby_version }}
   command: "{{ rbenv_root }}/bin/rbenv install {{ ruby_version }}"
   args:
