@@ -50,3 +50,6 @@
     - include_role:
         name: ansible-bundler-rails
       when: ruby_installed
+
+    - include_role:
+        name: ansible-postgres
