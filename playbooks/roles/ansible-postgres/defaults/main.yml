@@ -1,4 +1,2 @@
 ---
-db_user: bcbc
-db_password: bcbc3412
 postgresql_version: "14"
