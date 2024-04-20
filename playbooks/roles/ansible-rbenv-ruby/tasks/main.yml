@@ -42,13 +42,6 @@
         create: yes
         insertafter: EOF
       when: shell_type == "zsh" and shell_config_check.stat.exists and rbenv_init_command is defined
-
-    - name: Source shell config file and restart shell
-      shell: |
-        source {{ shell_config_file }} && exec $SHELL
-      args:
-        executable: "{{ shell_executable_default }}"
-      when: shell_config_check.stat.exists
   when: shell_config_check.stat.exists
 
 - name: Clone ruby-build repository
@@ -75,32 +68,19 @@
 - debug:
     msg: "rbenv version is {{ rbenv_version_output.stdout }}"
 
-- name: Check if Ruby is installed
-  shell: "ruby -v"
+- name: Check if ruby {{ ruby_version }} is installed
+  shell: "{{ rbenv_root }}/shims/ruby -v"
   register: ruby_check
   changed_when: false
   ignore_errors: true
 
-- debug:
-    msg: "Ruby is installed with version {{ ruby_check.stdout }}"
-  when: ruby_check.rc == 0
-
-- debug:
-    msg: "Ruby is not installed"
-  when: ruby_check.rc != 0
-
-- name: Check if required ruby version is installed
-  stat:
-    path: "{{ ruby_install_dir }}"
-  register: ruby_version_dir_stat
-
 - name: Install ruby {{ ruby_version }}
-  when: not ruby_version_dir_stat.stat.exists # Avoid rebuilding ruby because it takes a really long time
   command: "{{ rbenv_root }}/bin/rbenv install {{ ruby_version }}"
   args:
     executable: "{{ shell_executable_default }}"
   environment:
     PATH: "{{ rbenv_root }}/bin:{{ rbenv_root }}/shims:{{ ansible_env.PATH }}"
+  when: not ruby_check
 
 - name: Set ruby version as global default
   command: "{{ rbenv_root }}/bin/rbenv global {{ ruby_version }}"
@@ -108,3 +88,4 @@
     executable: "{{ shell_executable_default }}"
   environment:
     PATH: "{{ rbenv_root }}/bin:{{ rbenv_root }}/shims:{{ ansible_env.PATH }}"
+  when: not ruby_check
