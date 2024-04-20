@@ -75,11 +75,20 @@
     clone: yes
 
 - name: Add rbenv init to shell configuration file if not already added
-  lineinfile:
-    path: "{{ shell_config_file }}"
-    line: "eval \"$(~/.rbenv/bin/rbenv init - {{ shell_type }})\""
-    create: yes
-  when: shell_config_check.stat.exists and shell_type is defined
+  block:
+    - name: Read shell configuration file
+      slurp:
+        path: "{{ shell_config_file }}"
+      register: shell_config_content
+
+    - name: Add rbenv init to shell config if not already there
+      lineinfile:
+        path: "{{ shell_config_file }}"
+        line: "eval \"$(~/.rbenv/bin/rbenv init - {{ shell_type }})\""
+        create: yes
+        insertafter: EOF
+      when: shell_type is defined and shell_config_content['content'] | regex_search('\\n\\s*EOF\\s*\\Z') | bool
+  when: shell_config_check.stat.exists
   check_mode: yes
 
 - name: Restart shell
