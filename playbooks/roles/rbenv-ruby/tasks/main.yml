@@ -69,16 +69,18 @@
         rbenv_init_command: "eval \"$(~/.rbenv/bin/rbenv init - {{ shell_type }})\""
 
     - name: Add rbenv init to ~/.bashrc if not already there (bash)
-      shell: "echo '{{ rbenv_init_command }}' >> ~/.bashrc"
-      args:
-        creates: ~/.bashrc
+      shell: |
+        if ! grep -qxF "{{ rbenv_init_command }}" ~/.bashrc; then
+          echo "{{ rbenv_init_command }}" >> ~/.bashrc
+        fi
       when: shell_type == "bash" and shell_config_check.stat.exists and rbenv_init_command is defined
       check_mode: yes
 
     - name: Add rbenv init to ~/.zshrc if not already there (zsh)
-      shell: "echo '{{ rbenv_init_command }}' >> ~/.zshrc"
-      args:
-        creates: ~/.zshrc
+      shell: |
+        if ! grep -qxF "{{ rbenv_init_command }}" ~/.zshrc; then
+          echo "{{ rbenv_init_command }}" >> ~/.zshrc
+        fi
       when: shell_type == "zsh" and shell_config_check.stat.exists and rbenv_init_command is defined
       check_mode: yes
 
