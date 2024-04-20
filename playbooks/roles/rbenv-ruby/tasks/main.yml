@@ -74,6 +74,14 @@
     dest: "{{ rbenv_root }}/plugins/ruby-build"
     clone: yes
 
+- name: Add rbenv init to shell configuration file if not already added
+  lineinfile:
+    path: "{{ shell_config_file }}"
+    line: "eval \"$(~/.rbenv/bin/rbenv init - {{ shell_type }})\""
+    create: yes
+  when: shell_config_check.stat.exists and shell_type is defined
+  check_mode: yes
+
 - name: Restart shell
   shell: "source {{ shell_config_file }}"
   args:
