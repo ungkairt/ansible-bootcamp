@@ -16,11 +16,41 @@
     state: latest
   when: psql_check.rc != 0
 
+- name: Install required packages (curl and ca-certificates)
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - curl
+    - ca-certificates
+  when: psql_check.rc != 0
+
+- name: Create directory for PostgreSQL repository key
+  file:
+    path: /usr/share/postgresql-common/pgdg
+    state: directory
+  when: psql_check.rc != 0
+
+- name: Download PostgreSQL repository signing key
+  get_url:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    dest: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
+  when: psql_check.rc != 0
+
+- name: Add PostgreSQL repository to sources.list.d
+  shell: |
+    echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
+  when: psql_check.rc != 0
+
+- name: Update package lists
+  apt:
+    update_cache: yes
+  when: psql_check.rc != 0
+
 - name: Install PostgreSQL
   apt:
     name: "postgresql-{{ postgresql_version }}"
-    update_cache: yes
-    state: latest
+    state: present  # Use 'present' for idempotence
   when: psql_check.rc != 0
 
 - name: Start and enable PostgreSQL service

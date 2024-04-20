@@ -1,4 +1,5 @@
 - hosts: localhost
+  become: yes
   tasks:
     - set_fact:
         ansible_user_dir: "{{ lookup('env', 'HOME') }}"
