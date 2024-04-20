@@ -64,6 +64,6 @@
     - psql_check.rc == 0  # psql is installed
 
 - debug:
-    msg: "{{ service_psql_status }}"
+    msg: "{{ service_psql_status.stdout }}"
   when:
     - psql_check.rc == 0  # psql is installed

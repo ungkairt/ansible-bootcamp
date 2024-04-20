@@ -5,7 +5,7 @@
   ignore_errors: true
 
 - debug:
-    msg: "{{ ruby_installed }}"
+    msg: "{{ ruby_installed.stdout }}"
   when: ruby_installed
 
 - name: Update gems
@@ -15,7 +15,7 @@
   when: ruby_installed
 
 - debug:
-    msg: "{{ gem_update_status }}"
+    msg: "{{ gem_update_status.stdout }}"
   when: ruby_installed
 
 - name: Install Bundler
