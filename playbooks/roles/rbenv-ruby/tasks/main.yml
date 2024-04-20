@@ -101,9 +101,7 @@
     repo: https://github.com/rbenv/ruby-build.git
     dest: "{{ rbenv_root }}/plugins/ruby-build"
     clone: yes
-
   when: shell_config_check.stat.exists
-  check_mode: yes
 
 - name: Restart shell
   shell: "source {{ shell_config_file }}"
@@ -136,74 +134,22 @@
     msg: "Ruby is not installed"
   when: ruby_check.rc != 0
 
-- name: Install Ruby if not found
-  shell: "rbenv install {{ ruby_version }}"
-  args:
-    executable: "{{ shell_executable_default }}"
-  when: ruby_check.rc != 0
-
-- name: Set global Ruby version
-  shell: "rbenv global {{ ruby_version }}"
-  args:
-    executable: "{{ shell_executable_default }}"
-  when: ruby_check.rc != 0  # Only set the global Ruby version if Ruby was installed
-
-- name: Rehash rbenv
-  shell: "rbenv rehash"
-  args:
-    executable: "{{ shell_executable_default }}"
-  when: ruby_check.rc != 0  # Only rehash if Ruby was installed
-
-- name: Display Ruby version
-  shell: "ruby -v"
-  register: ruby_version_output
-  args:
-    executable: "{{ shell_executable_default }}"
-  ignore_errors: true
-
-- debug:
-    msg: "Ruby version is {{ ruby_version_output.stdout }}"
-  when: ruby_version_output.rc == 0
-
-
-- name: Check if .gemrc file exists
+- name: Check if required ruby version is installed
   stat:
-    path: ~/.gemrc
-  register: gemrc_check
+    path: "{{ ruby_install_dir }}"
+  register: ruby_version_dir_stat
 
-- name: Create .gemrc file if it doesn't exist
-  copy:
-    content: |
-      # ~/.gemrc
-      gem: --no-document
-    dest: ~/.gemrc
-  when: gemrc_check.stat.exists == false
-
-- name: Check if bundler is installed
-  command: bundler --version
-  register: bundler_check
-  ignore_errors: true
-
-- debug:
-    msg: "Bundler is installed with version {{ bundler_check.stdout }}"
-  when: bundler_check.rc == 0
-
-- debug:
-    msg: "Bundler is not installed"
-  when: bundler_check.rc != 0
-
-- name: Install Bundler if not found
-  shell: "gem install bundler --no-document"
+- name: Install ruby
+  when: not ruby_version_dir_stat.stat.exists # Avoid rebuilding ruby because it takes a really long time
+  command: "{{ rbenv_root }}/bin/rbenv install {{ ruby_version }}"
   args:
     executable: "{{ shell_executable_default }}"
-  when: bundler_check.rc != 0
+  environment:
+    PATH: "{{ rbenv_root }}/bin:{{ rbenv_root }}/shims:{{ ansible_env.PATH }}"
 
-- name: Display Bundler version
-  shell: "bundler --version"
-  register: bundler_version_output
-  ignore_errors: true
-  when: bundler_check.rc == 0
-
-- debug:
-    msg: "{{ bundler_version_output.stdout }}"
-  when: bundler_version_output.rc == 0
+- name: Set ruby version as global default
+  command: "{{ rbenv_root }}/bin/rbenv global {{ ruby_version }}"
+  args:
+    executable: "{{ shell_executable_default }}"
+  environment:
+    PATH: "{{ rbenv_root }}/bin:{{ rbenv_root }}/shims:{{ ansible_env.PATH }}"

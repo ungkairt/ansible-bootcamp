@@ -5,3 +5,11 @@
       name: software-common-apt
   - include_role:
       name: rbenv-ruby
+  - name: Provide message for user
+    debug:
+      msg: |
+        Ruby and Bundler installation completed.
+        Please refresh your shell manually to apply changes:
+        source ~/.bashrc
+        or
+        exec $SHELL
