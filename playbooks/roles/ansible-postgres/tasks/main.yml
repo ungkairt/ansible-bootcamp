@@ -54,7 +54,7 @@
   when: psql_check.rc != 0
 
 - name: Start and enable PostgreSQL service
-  systemd:
+  service:
     name: postgresql
     state: started
     enabled: yes
