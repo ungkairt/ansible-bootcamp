@@ -10,6 +10,10 @@ sudo apt update
 
 # Install Ansible
 sudo apt install -y ansible
+# Install git
+sudo apt install -y git
+# Install make
+sudo apt install -y make
 
 # Clone Ansible bootcamp repository into the current directory
 git clone https://github.com/ppp3ppj/ansible-bootcamp "$PWD"/ansible-bootcamp
