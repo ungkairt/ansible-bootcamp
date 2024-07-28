@@ -1,13 +1,24 @@
 ---
-- name: Install prerequisites {{ su_password }}
-  apt: name=aptitude update_cache=yes state=latest force_apt_get=yes
+- name: Install prerequisites
+  apt:
+    name: aptitude
+    update_cache: yes
+    state: latest
+    force_apt_get: yes
 
-- name: Install required system packages {{ su_password }}
-  apt: name={{ item }} state=latest update_cache=yes
+- name: Debug required_packages
+  debug:
+    msg: "{{ required_packages }}"
+
+- name: Install required system packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
   loop:
     - curl
-    # - ufw
-    # - fail2ban
+    - ufw
+    - fail2ban
     - git-core
     - apt-transport-https
     - ca-certificates
@@ -15,4 +26,10 @@
     - python3-pip
     - virtualenv
     - python3-setuptools
-    - "{{ required_packages }}"
+
+- name: Install required packages from app-vars
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  loop: "{{ required_packages }}"
