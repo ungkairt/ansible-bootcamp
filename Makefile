@@ -6,7 +6,7 @@ VAULT_FILE = my_vault.yml
 # Run the Ansible playbook
 run_playbook:
 	@echo "Running Ansible playbook..."
-	@ansible-playbook -i inventories/$(INVENTORY) $(PLAYBOOK) --ask-vault-pass
+	@ansible-playbook $(PLAYBOOK) --ask-vault-pass --connection=local --extra-vars '@my_vault.yml'
 
 debug_playbook:
 	@echo "Running [DEBUG] Ansible playbook..."

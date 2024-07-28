@@ -1,7 +1,6 @@
 ---
 - name: Install prerequisites {{ su_password }}
   apt: name=aptitude update_cache=yes state=latest force_apt_get=yes
-  check_mode: true
 
 - name: Install required system packages {{ su_password }}
   apt: name={{ item }} state=latest update_cache=yes
@@ -17,4 +16,3 @@
     - virtualenv
     - python3-setuptools
     - "{{ required_packages }}"
-  check_mode: true
