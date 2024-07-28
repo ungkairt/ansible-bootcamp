@@ -5,10 +5,7 @@
   become: true
 
   vars_files:
-    - app-vars
-
-  vars:
-    ansible_become_pass: '{{ su_password }}'
+    - app-vars.yml
 
   roles:
     - role: common
