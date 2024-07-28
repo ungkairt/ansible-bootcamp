@@ -1,9 +1,22 @@
 ---
 - hosts: all
   become: true
+  tasks:
+    - shell: echo 'hello world'
 
   vars_files:
     - app-vars
 
+  vars:
+    ansible_become_pass: '{{ su_password }}'
+
+  pre_tasks:
+      - name: apt-get update
+        raw: apt-get update -qq
+      - name: Print mosh version
+        debug: "msg=Mosh Version: '{{ su_password }}'"
+
+
   roles:
     - role: common
+

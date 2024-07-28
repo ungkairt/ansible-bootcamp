@@ -1,5 +1,8 @@
 ---
 
+# su password supersecret
+su_password: supersecret
+
 # App Git repo
 app_git_repo:       "YOUR_GIT_REPO"
 app_git_branch:     "master"
