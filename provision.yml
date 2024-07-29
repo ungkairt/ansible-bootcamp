@@ -9,5 +9,5 @@
 
   roles:
     #- role: common
-    - role: ruby
-
+    #- role: ruby
+    - postgresql

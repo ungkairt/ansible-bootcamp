@@ -43,3 +43,13 @@ rbenv_bundle: "{{ rbenv_root_path }}/shims/bundle"
 
 # Nodejs
 nodejs_version: "12.x"
+
+# Postgresql
+postgresql_version: "14"
+postgresql_db_user: "{{ deploy_user }}_postgresql_user"
+postgresql_db_password: "3412" # from vault
+#postgresql_db_password: "{{ vault_postgresql_db_password }}" # from vault
+postgresql_db_name: "test_production"
+postgresql_listen:
+  - "localhost"
+  - "{{ ansible_default_ipv4.address }}" # only if db is on a separate server
