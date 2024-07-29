@@ -78,4 +78,5 @@
   with_items: "{{ postgresql_databases }}"
   when: item.name != ''
   become: yes
-  become_user: "{{ postgresql_admin_user }}" become_user: "{{ postgresql_admin_user }}"
+  become_user: "{{ postgresql_admin_user }}"
+  become_user: "{{ postgresql_admin_user }}"
