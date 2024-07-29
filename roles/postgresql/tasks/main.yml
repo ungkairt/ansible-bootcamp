@@ -61,8 +61,8 @@
     name: "{{ item.name }}"
     password: "{{ item.password }}"
     role_attr_flags: "{{ item.role_attr_flags | default(postgresql_users_role_attr_flags) | join(',') | replace('\\n', '') }}"
-  when: item.name != ''
   with_items: "{{ postgresql_users }}"
+  when: item.name != ''
   become: yes
   become_user: "{{ postgresql_admin_user }}"
 
@@ -75,7 +75,7 @@
     lc_ctype: "{{ item.lc_ctype | default(postgresql_locale + '.' + postgresql_encoding) }}"
     template: "{{ item.template | default('template0') }}"
     state: present
-  when: item.name != ''
   with_items: "{{ postgresql_databases }}"
+  when: item.name != ''
   become: yes
-  become_user: "{{ postgresql_admin_user }}"
+  become_user: "{{ postgresql_admin_user }}" become_user: "{{ postgresql_admin_user }}"
