@@ -10,4 +10,5 @@
   roles:
     #- role: common
     #- role: ruby
-    - postgresql
+    #- postgresql
+    - postgresql_old

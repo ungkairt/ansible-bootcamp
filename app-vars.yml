@@ -46,6 +46,8 @@ nodejs_version: "12.x"
 
 # Postgresql
 postgresql_version: "14"
+
+# if use old version this no take effect when set
 postgresql_db_user: "{{ deploy_user }}_postgresql_user"
 postgresql_db_password: "3412" # from vault
 #postgresql_db_password: "{{ vault_postgresql_db_password }}" # from vault
