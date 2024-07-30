@@ -45,3 +45,8 @@ clean:
 	@echo "Cleaning up..."
 
 .PHONY: all check_config run_playbook clean
+
+# for vagrant
+vagrant_reset:
+	@echo "Vagrant reset..."
+	vagrant destroy && vagrant up
