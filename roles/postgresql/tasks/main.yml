@@ -52,8 +52,8 @@
   changed_when: >
     postgresql_update_template_result.stdout is defined
     and 'UPDATE 0' != postgresql_update_template_result.stdout
-  ignore_errors: yes
-  become: yes
+  ignore_errors: true
+  become: true
   become_user: "{{ postgresql_admin_user }}"
 
 - name: Create users
@@ -63,7 +63,7 @@
     role_attr_flags: "{{ item.role_attr_flags | default(postgresql_users_role_attr_flags) | join(',') | replace('\\n', '') }}"
   with_items: "{{ postgresql_users }}"
   when: item.name != ''
-  become: yes
+  become: true
   become_user: "{{ postgresql_admin_user }}"
 
 - name: Create databases
@@ -77,6 +77,5 @@
     state: present
   with_items: "{{ postgresql_databases }}"
   when: item.name != ''
-  become: yes
-  become_user: "{{ postgresql_admin_user }}"
+  become: true
   become_user: "{{ postgresql_admin_user }}"
