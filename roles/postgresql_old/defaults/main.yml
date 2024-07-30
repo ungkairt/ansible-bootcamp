@@ -1,0 +1,15 @@
+---
+postgresql_version: "14"
+
+postgresql_packages:
+  - "postgresql-{{ postgresql_version }}"
+  - "postgresql-contrib-{{ postgresql_version }}"
+
+postgresql_python_packages:
+  - "python3-psycopg2"
+
+postgresql_apt_url: "https://apt.postgresql.org/pub/repos/apt"
+postgresql_apt_key: "{{ postgresql_apt_url }}/ACCC4CF8.asc"
+postgresql_apt_repo: "deb {{ postgresql_apt_url }}/ {{ ansible_lsb.codename }}-pgdg main"
+
+postgresql_service: postgresql
