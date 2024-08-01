@@ -3,14 +3,14 @@
   - name: uninstall
     block:
 
-      - name: find .nvm path
-        ansible.builtin.shell: "{{ mg_user_shell.command }} + ' printenv NVM_DIR'"
-        register: mg_remote_nvm_path
-        changed_when: "mg_remote_nvm_path.rc != 0"
+      - name: Verify NVM installation
+        ansible.builtin.shell: |
+          ls -la {{ deploy_user_path }}/.nvm
+        register: mg_nvm_install_check
 
       - name: Uninstall NVM
         ansible.builtin.file:
-          path: "{{ mg_remote_nvm_path.stdout | default('~/.nvm') }}"
+          path: "{{ deploy_user_path }}/.nvm"
           state: absent
 
       - name: Remove NVM nvm_profile info
@@ -34,7 +34,7 @@
   - name: clean_install
     block:
 
-      # find any directory that has nvm in it e.g. /.nvm or /nvm etc. 
+      # find any directory that has nvm in it e.g. /.nvm or /nvm etc.
       # exclude any path that contains linux
       # ignore anything that has "Permission denied" in the response and then
       # direct it to stdout >&1
@@ -56,7 +56,7 @@
           state: absent
         loop: "{{ nvm_dir_possible_locations.stdout_lines }}"
         when: nvm_dir_possible_locations.stdout_lines | length > 0
-    
+
       # r = recursive
       # w = word-regex Select only those lines containing matches that form whole words.
       # s = suppress error messages (no "Permission Denied")
@@ -80,5 +80,5 @@
           state: absent
         loop: "{{ nvm_shell_possible_locations.stdout_lines }}"
         when: nvm_shell_possible_locations.stdout_lines | length > 0
-    
+
     when: clean_install | bool

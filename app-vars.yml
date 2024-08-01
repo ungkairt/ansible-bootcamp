@@ -45,6 +45,7 @@ rbenv_bundle: "{{ rbenv_root_path }}/shims/bundle"
 nodejs_version: "lts"
 nvm_dir: "{{ deploy_user_path }}/.nvm"
 nvm_profile: "{{ deploy_user_path }}/.bashrc"
+uninstall: false # use for uninstall nvm and nodejs
 
 # Postgresql
 postgresql_version: "14"
