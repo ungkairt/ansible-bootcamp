@@ -1,6 +1,4 @@
 ---
-#- hosts: 127.0.0.1
-#  connection: local
 - hosts: all
   become: true
 
@@ -11,4 +9,8 @@
     #- role: common
     #- role: ruby
     #- postgresql
-    - postgresql_old
+    #- postgresql_old
+    - role: nvm_nodejs
+      become: false
+
+
