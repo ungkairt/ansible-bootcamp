@@ -190,8 +190,22 @@
 
       when: "nvm_install == 'git'"
 
+
+    - name: Check if nvm is available
+      ansible.builtin.shell: |
+          . {{ deploy_user_path }}/.nvm/nvm.sh && nvm --version
+      register: mg_nvm_check
+      ignore_errors: yes
+
+    - name: Fail if nvm is not found
+      ansible.builtin.fail:
+        msg: "NVM is not available. Check the installation path or nvm setup."
+      when: mg_nvm_check.rc != 0
+
     - name: Check NVM Version # noqa 305
-      ansible.builtin.shell: "{{ mg_user_shell.command + ' \"nvm --version\"' }}"
+      #ansible.builtin.shell: "{{ mg_user_shell.command + ' \"nvm --version\"' }}"
+      ansible.builtin.shell: |
+        {{ mg_user_shell.command }} -c "source {{ deploy_user_path }}/.nvm/nvm.sh && nvm --version"
       register: mg_nvm_version_response
       changed_when: "mg_nvm_version_response.rc != 0"
 
@@ -214,30 +228,25 @@
         nodejs_alias: lts/*
       when: "nodejs_version == 'lts'"
 
-    - name: Check if nvm is available
-      ansible.builtin.shell: |
-          . {{ deploy_user_path }}/.nvm/nvm.sh && nvm --version
-      register: mg_nvm_check
-      ignore_errors: yes
-
-    - name: Fail if nvm is not found
-      ansible.builtin.fail:
-        msg: "NVM is not available. Check the installation path or nvm setup."
-      when: mg_nvm_check.rc != 0
 
     # This scenario handles the first run/install of NVM because this will automatically
     # alias the specified version as default - This should handle most use cases
     - name: Install Node # noqa 305
       ansible.builtin.shell: |
-        "{{ mg_user_shell.command }}" -c "source {{ deploy_user_path }}/.nvm/nvm.sh && nvm install {{ nodejs_version }}"
+        {{ mg_user_shell.command }} -c "source {{ deploy_user_path }}/.nvm/nvm.sh && nvm install {{ nodejs_version }}"
       register: mg_node_version_response
       changed_when: "'already installed' not in mg_node_version_response.stderr"
 
-    # Test is there is a default already set
-    - name: Is there a default already set # noqa 305
-      ansible.builtin.shell: "{{ mg_user_shell.command + ' \"cat \\$(printenv NVM_DIR)/alias/default\"' }}"
-      register: mg_nvm_default_response
-      changed_when: "mg_nvm_default_response.rc != 0"
+    - name: Check if default alias file exists
+      ansible.builtin.stat:
+        path: "{{ deploy_user_path }}/.nvm/alias/default"
+      register: mg_default_file
+      ignore_errors: yes
+
+    - name: Fail if default alias file does not exist
+      ansible.builtin.fail:
+        msg: "The default alias file does not exist."
+      when: not mg_default_file.stat.exists
 
     # In the event there are multiple versions of Node being installed/used/upgraded
     # on the same machine we'll need to alias the default version accordingly
