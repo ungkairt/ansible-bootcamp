@@ -25,7 +25,7 @@ required_packages:
   - bison
   - libreadline6-dev
   - libncurses5-dev
-  - libgdbm5
+  - libgdbm6 # for ubuntu > 20.04
   - libgdbm-dev
   - libpq-dev # postgresql client
   - libjemalloc-dev # jemalloc
