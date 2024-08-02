@@ -1,11 +1,3 @@
-# Setup
-
-    curl -o- https://raw.githubusercontent.com/ppp3ppj/ansible-bootcamp/main/resources/setup | sh -
-
-# Run playbook
-
-    ansible-playbook playbooks/machine-ubuntu.yml --ask-become-pass
-
 # Bootcamp Setup with Ansible
 
 This repository contains Ansible playbooks for setting up a bootcamp environment. The setup includes installing Ruby, common packages, PostgreSQL, and NVM (Node Version Manager) for managing Node.js versions.
@@ -19,7 +11,12 @@ Before you begin, ensure you have the following installed on your local machine:
 
 ## Setup
 
-1.  **Clone the Repository**
+1.  **Install Script & Clone the Repository **
+	```
+    curl -o- https://raw.githubusercontent.com/ppp3ppj/ansible-bootcamp/main/resources/setup | sh -
+    cd ansible-bootcamp
+    ```
+		or
     ```
     git clone https://github.com/ppp3ppj/ansible-bootcamp
     cd ansible-bootcamp
@@ -27,7 +24,7 @@ Before you begin, ensure you have the following installed on your local machine:
 2.  **Configure Variables**
 Edit the `app-vars.yml` file to specify your target username. For example:
 `
-deploy_user:        ppp_bootcamp
+deploy_user: ppp_bootcamp
 ` you can use `whoami` for get username for enter in this target username and you can configure variables like this
 	```
 	ruby_version: 3.3.3
@@ -50,4 +47,5 @@ deploy_user:        ppp_bootcamp
 	```
 	make debug
 	```
+
 
