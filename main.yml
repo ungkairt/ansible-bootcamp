@@ -1,7 +1,0 @@
----
-- hosts: development
-  become: yes
-  vars:
-    temp_folder: /tmp
-  tasks:
-    - include: playbooks/core.yml

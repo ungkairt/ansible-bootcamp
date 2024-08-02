@@ -1,3 +1,0 @@
----
-ansible_user_dir: "{{ lookup('env', 'HOME') }}"
-rails_version: "7.1.3.2"  # Set your desired Rails version here or use 7.1.3
