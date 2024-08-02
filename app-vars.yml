@@ -42,6 +42,7 @@ rbenv_bin: "{{ rbenv_root_path }}/bin/rbenv"
 rbenv_bundle: "{{ rbenv_root_path }}/shims/bundle"
 
 # Nodejs
+nvm_version: "0.40.0"
 nodejs_version: "lts"
 nvm_dir: "{{ deploy_user_path }}/.nvm"
 nvm_profile: "{{ deploy_user_path }}/.bashrc"
