@@ -6,10 +6,10 @@
     - app-vars.yml
 
   roles:
-    #- role: common
-    #- role: ruby
+    - role: common
+    - role: ruby
     #- postgresql
-    #- postgresql_old
+    - postgresql_old
     - role: nvm_nodejs
       become: false
 
