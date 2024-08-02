@@ -1,19 +1,29 @@
 #!/usr/bin/env bash
 
-# Update package index and install necessary tools
-sudo apt update
-sudo apt install -y software-properties-common
+# Ensure the script exits on error and treats unset variables as an error
+set -euo pipefail
+
+# Function to update package index and install packages
+install_packages() {
+    sudo apt update
+    sudo apt install -y "$@"
+}
+
+# Install essential tools
+install_packages software-properties-common git make
 
 # Add Ansible repository and update package index again
 sudo add-apt-repository --yes --update ppa:ansible/ansible
-sudo apt update
 
 # Install Ansible
-sudo apt install -y ansible
-# Install git
-sudo apt install -y git
-# Install make
-sudo apt install -y make
+install_packages ansible
 
-# Clone Ansible bootcamp repository into the current directory
-git clone https://github.com/ppp3ppj/ansible-bootcamp "$PWD"/ansible-bootcamp
+# Clone the Ansible bootcamp repository
+REPO_URL="https://github.com/ppp3ppj/ansible-bootcamp"
+CLONE_DIR="$PWD/ansible-bootcamp"
+
+if [ ! -d "$CLONE_DIR" ]; then
+    git clone "$REPO_URL" "$CLONE_DIR"
+else
+    echo "Repository already cloned in $CLONE_DIR"
+fi
