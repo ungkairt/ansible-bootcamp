@@ -15,7 +15,7 @@ Before you begin, ensure you have the following installed on your local machine:
 
 	First, clone the repository to your local machine. You can use either of the following methods:
 	```
-	curl -o- https://raw.githubusercontent.com/ppp3ppj/ansible-bootcamp/main/		resources/setup | sh -
+	curl -o- https://raw.githubusercontent.com/ppp3ppj/ansible-bootcamp/main/resources/setup | sh -
     cd ansible-bootcamp
     ```
 	Alternatively, if you prefer to use the setup script, use the following command:
