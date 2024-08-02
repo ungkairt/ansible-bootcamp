@@ -11,35 +11,35 @@ Before you begin, ensure you have the following installed on your local machine:
 
 ## Setup
 
-1.  **Install Script & Clone the Repository **
+1. **Clone the Repository**
+
+	First, clone the repository to your local machine. You can use either of the following methods:
 	```
-    curl -o- https://raw.githubusercontent.com/ppp3ppj/ansible-bootcamp/main/resources/setup | sh -
+	curl -o- https://raw.githubusercontent.com/ppp3ppj/ansible-bootcamp/main/		resources/setup | sh -
     cd ansible-bootcamp
     ```
-		or
+	Alternatively, if you prefer to use the setup script, use the following command:
     ```
     git clone https://github.com/ppp3ppj/ansible-bootcamp
     cd ansible-bootcamp
     ```
 2.  **Configure Variables**
-Edit the `app-vars.yml` file to specify your target username. For example:
-`
-deploy_user: ppp_bootcamp
-` you can use `whoami` for get username for enter in this target username and you can configure variables like this
+Edit the `app-vars.yml` file to specify your target username and other variables. For example:
 	```
+	deploy_user: ppp_bootcamp
 	ruby_version: 3.3.3
 	nodejs_version: "lts"
 	postgresql_version: "14"
 	```
-	**Ansible Vault default password is** `3412`
-	**MUST** set  ansible edit vault sudo password first, use the following command:
-	 `make edit_vault`  and set your sudo password like this:
+	You can use the `whoami` command to get your username and set it in the `deploy_user` field.
+
+	**Ansible Vault default password is** `3412`. You must set the Ansible Vault password for sudo access. Use the following command:
 	 ```
 	 # su password supersecret
 	su_password: 3412
 	 ```
 3. **Run the Playbook**
-	To execute the playbook and set up the environment, use the following command. If your 		playbook includes encrypted variables and you use Ansible Vault, you will need enter vault password is `3412`
+	To execute the playbook and set up the environment, use the following command. If your playbook includes encrypted variables and you use Ansible Vault, you will need to enter the vault password `3412`:
 	```
 	make all
 	```
@@ -47,5 +47,3 @@ deploy_user: ppp_bootcamp
 	```
 	make debug
 	```
-
-
