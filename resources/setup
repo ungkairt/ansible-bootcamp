@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Ensure the script exits on error and treats unset variables as an error
-set -euo
+set -euo pipefail
 
 # Function to update package index and install packages
 install_packages() {
