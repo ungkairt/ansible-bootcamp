@@ -1,0 +1,16 @@
+---
+- hosts: all
+  become: true
+
+  vars_files:
+    - app-vars.yml
+
+  roles:
+    #- role: common
+    #- role: ruby
+    #- postgresql
+    #- postgresql_old
+    - role: nvm_nodejs
+      become: false
+
+

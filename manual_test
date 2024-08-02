@@ -1,2 +1,0 @@
-podman build -t ansible_test -f ./Dockerfile
-podman run -it ansible_test bash

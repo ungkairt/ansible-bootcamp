@@ -1,0 +1,60 @@
+---
+# whoami into this
+deploy_user:        ppp_bootcamp
+deploy_group:       "{{ deploy_user }}"
+deploy_user_path:   "/home/{{ deploy_user }}"
+
+# App Git repo
+app_git_repo:       "YOUR_GIT_REPO"
+app_git_branch:     "master"
+
+# Common
+required_packages:
+  - zlib1g-dev
+  - build-essential
+  - libssl-dev
+  - libreadline-dev
+  - libyaml-dev
+  - libxml2-dev
+  - libxslt1-dev
+  - libcurl4-openssl-dev
+  - libffi-dev
+  - dirmngr
+  - gnupg
+  - autoconf
+  - bison
+  - libreadline6-dev
+  - libncurses5-dev
+  - libgdbm6 # for ubuntu > 20.04
+  - libgdbm-dev
+  - libpq-dev # postgresql client
+  - libjemalloc-dev # jemalloc
+
+# Ruby
+ruby_version: 3.3.3 #new version
+#rbenv_ruby_configure_opts: "RUBY_CONFIGURE_OPTS=--with-jemalloc"
+rbenv_ruby_configure_opts: ""
+rbenv_root_path: "{{ deploy_user_path }}/.rbenv"
+rbenv_shell_rc_path: "{{ deploy_user_path }}/.bashrc"
+rubies_path: "{{ rbenv_root_path }}/versions"
+ruby_path: "{{ rubies_path }}/{{ ruby_version }}"
+rbenv_bin: "{{ rbenv_root_path }}/bin/rbenv"
+rbenv_bundle: "{{ rbenv_root_path }}/shims/bundle"
+
+# Nodejs
+nodejs_version: "lts"
+nvm_dir: "{{ deploy_user_path }}/.nvm"
+nvm_profile: "{{ deploy_user_path }}/.bashrc"
+uninstall: false # use for uninstall nvm and nodejs
+
+# Postgresql
+postgresql_version: "14"
+
+# if use old version this no take effect when set
+postgresql_db_user: "{{ deploy_user }}_postgresql_user"
+postgresql_db_password: "3412" # from vault
+#postgresql_db_password: "{{ vault_postgresql_db_password }}" # from vault
+postgresql_db_name: "test_production"
+postgresql_listen:
+  - "localhost"
+  - "{{ ansible_default_ipv4.address }}" # only if db is on a separate server

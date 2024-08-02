@@ -1,0 +1,16 @@
+---
+- name: Add postgres repo key
+  apt_key:
+    url: "{{ postgresql_apt_key }}"
+
+- name: Add postgres repo
+  apt_repository:
+    repo: "{{ postgresql_apt_repo }}"
+
+- name: Install required postgres packages
+  apt: name={{ item }} state=latest update_cache=yes cache_valid_time=86400
+  loop:
+    - "{{ postgresql_packages }}"
+    - "{{ postgresql_python_packages }}"
+    - "postgresql-{{ postgresql_version }}"
+    - "postgresql-contrib-{{ postgresql_version }}"
