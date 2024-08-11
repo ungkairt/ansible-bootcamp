@@ -1,0 +1,3 @@
+[submodule "bootcamp-doctor"]
+	path = bootcamp-doctor
+	url = git@me:ppp3ppj/bootcamp-doctor-cli.git
