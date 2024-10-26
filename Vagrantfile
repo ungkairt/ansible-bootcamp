@@ -1,7 +1,9 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "generic/ubuntu2204"
 
-  config.ssh.username = 'vagrant'
+  username = "vagrant"
+
+  config.ssh.username = username
   config.ssh.password = 'vagrant'
   config.ssh.insert_key = 'true'
 
@@ -15,6 +17,7 @@ Vagrant.configure("2") do |config|
      apt-get update
      apt-get upgrade -y
      curl -o- https://raw.githubusercontent.com/ppp3ppj/ansible-bootcamp/main/resources/setup | bash
+     chown -R #{username}:#{username} /home/#{username}/ansible-bootcamp
    SHELL
   #config.vm.provision :shell, inline: "sudo apt upgrade -y"
 end
