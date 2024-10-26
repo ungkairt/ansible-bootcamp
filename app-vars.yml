@@ -1,6 +1,6 @@
 ---
 # whoami into this
-deploy_user:        ppp_bootcamp
+deploy_user:        "{{ lookup('pipe', '/usr/bin/whoami') }}"
 deploy_group:       "{{ deploy_user }}"
 deploy_user_path:   "/home/{{ deploy_user }}"
 
