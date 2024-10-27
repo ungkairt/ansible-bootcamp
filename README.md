@@ -1,3 +1,4 @@
+
 # Bootcamp Setup with Ansible
 
 This repository contains Ansible playbooks for setting up a bootcamp environment. The setup includes installing Ruby, common packages, PostgreSQL, and NVM (Node Version Manager) for managing Node.js versions.
@@ -24,14 +25,12 @@ Before you begin, ensure you have the following installed on your local machine:
     cd ansible-bootcamp
     ```
 2.  **Configure Variables**
-Edit the `app-vars.yml` file to specify your target username and other variables. For example:
+Edit the `app-vars.yml` file to specify your target variables. For example:
 	```
-	deploy_user: ppp_bootcamp
 	ruby_version: 3.3.3
 	nodejs_version: "lts"
 	postgresql_version: "14"
 	```
-	You can use the `whoami` command to get your username and set it in the `deploy_user` field.
 
 	**Ansible Vault default password is** `3412`. You must set the Ansible Vault password for sudo access. Use the following command:
 	 ```
