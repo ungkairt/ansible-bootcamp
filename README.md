@@ -16,12 +16,12 @@ Before you begin, ensure you have the following installed on your local machine:
 
 	First, clone the repository to your local machine. You can use either of the following methods:
     ```
-    git clone https://github.com/ppp3ppj/ansible-bootcamp
+    git clone https://github.com/ungkairt/ansible-bootcamp
     cd ansible-bootcamp
     ```
 	Alternatively, if you prefer to use the setup script, use the following command:
 	```
-	curl -o- https://raw.githubusercontent.com/ppp3ppj/ansible-bootcamp/main/resources/setup | bash
+	curl -o- https://raw.githubusercontent.com/ungkairt/ansible-bootcamp/main/resources/setup | bash
     cd ansible-bootcamp
     ```
 2.  **Configure Variables**
@@ -46,4 +46,5 @@ Edit the `app-vars.yml` file to specify your target variables. For example:
 	```
 	make debug
 	```
+	Athiwat Khamnon (eiei)
 

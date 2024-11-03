@@ -1,4 +1,9 @@
-- name: Restart postgresql
+- name: Restart PostgreSQL (Debian)
   service:
-    name: "{{ postgresql_service }}"
+    name: postgresql
     state: restarted
+  when: ansible_os_family == 'Debian'
+
+- name: Restart PostgreSQL (macOS)
+  command: brew services restart postgresql
+  when: ansible_os_family == 'Darwin'

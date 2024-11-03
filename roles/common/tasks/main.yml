@@ -1,35 +1,5 @@
----
-- name: Install prerequisites
-  apt:
-    name: aptitude
-    update_cache: yes
-    state: latest
-    force_apt_get: yes
+- include_tasks: mac_install.yml
+  when: ansible_os_family == 'Darwin'
 
-- name: Debug required_packages
-  debug:
-    msg: "{{ required_packages }}"
-
-- name: Install required system packages
-  apt:
-    name: "{{ item }}"
-    state: latest
-    update_cache: yes
-  loop:
-    - curl
-    - ufw
-    - fail2ban
-    - git-core
-    - apt-transport-https
-    - ca-certificates
-    - software-properties-common
-    - python3-pip
-    - virtualenv
-    - python3-setuptools
-
-- name: Install required packages from app-vars
-  apt:
-    name: "{{ item }}"
-    state: latest
-    update_cache: yes
-  loop: "{{ required_packages }}"
+- include_tasks: debian_install.yml
+  when: ansible_os_family == 'Debian'

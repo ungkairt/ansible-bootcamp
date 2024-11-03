@@ -8,8 +8,8 @@ deploy_user_path:   "/home/{{ deploy_user }}"
 app_git_repo:       "YOUR_GIT_REPO"
 app_git_branch:     "master"
 
-# Common
-required_packages:
+# Common (mac not use required_packages)
+required_packages: 
   - zlib1g-dev
   - build-essential
   - libssl-dev

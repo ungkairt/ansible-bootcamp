@@ -1,0 +1,11 @@
+- name: Install prerequisites for macOS
+  homebrew:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - curl
+    - git
+    - openssl
+    - python3
+    - virtualenv
+    - wget

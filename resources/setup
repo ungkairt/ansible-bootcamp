@@ -3,23 +3,52 @@
 # Ensure the script exits on error and treats unset variables as an error
 set -euo pipefail
 
-# Function to update package index and install packages
-install_packages() {
+# Function to install packages on Debian/Ubuntu
+install_packages_debian() {
     sudo apt update
     sudo apt install -y "$@"
 }
 
-# Install essential tools
-install_packages software-properties-common git make
+# Function to install packages on macOS
+install_packages_macos() {
+    brew update
+    brew install "$@"
+}
 
-# Add Ansible repository and update package index again
-sudo add-apt-repository --yes --update ppa:ansible/ansible
+# Check OS and set the package installation function
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # Check if Debian/Ubuntu
+    if [[ -f /etc/debian_version ]]; then
+        install_packages=install_packages_debian
+    else
+        echo "This script currently supports only Debian-based Linux systems and macOS."
+        exit 1
+    fi
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+    if ! command -v brew &>/dev/null; then
+        echo "Homebrew not found. Installing Homebrew..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+    install_packages=install_packages_macos
+else
+    echo "Unsupported OS type: $OSTYPE"
+    exit 1
+fi
+
+# Install essential tools
+$install_packages software-properties-common git make
+
+# Add Ansible repository and update package index again (Debian only)
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    sudo add-apt-repository --yes --update ppa:ansible/ansible
+fi
 
 # Install Ansible
-install_packages ansible
+$install_packages ansible
 
 # Clone the Ansible bootcamp repository
-REPO_URL="https://github.com/ppp3ppj/ansible-bootcamp"
+REPO_URL="https://github.com/ungkairt/ansible-bootcamp"
 CLONE_DIR="$PWD/ansible-bootcamp"
 
 if [ ! -d "$CLONE_DIR" ]; then
